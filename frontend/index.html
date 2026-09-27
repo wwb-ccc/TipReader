@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TipReader</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/wails/runtime.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="window">
+            <div class="background"></div>
+
+            <!-- 顶部透明拖动条：仅用于拖动窗口，不盖住文字点击区 -->
+            <div class="drag-area"></div>
+
+            <!-- 悬停工具：关闭按钮 -->
+            <div class="hoverTools">
+                <button class="icon-btn" id="btn-close" title="关闭 (Esc)">×</button>
+            </div>
+
+            <!-- 提词内容 -->
+            <div class="teleprompter" id="teleprompter">
+                <div class="lines" id="lines"></div>
+            </div>
+
+            <!-- 状态提示（缺失 read.md 等） -->
+            <div class="notice hidden" id="notice"></div>
+
+            <!-- 控制端命令条 -->
+            <div class="controlbar">
+                <button id="btn-prev" title="上一行 (↑)">上一行</button>
+                <button id="btn-next" title="下一行 (↓/空格)">下一行</button>
+                <button id="btn-reload" title="重新读取 read.md (Ctrl+R)">重读</button>
+                <button id="btn-settings" title="设置">设置</button>
+            </div>
+            <div class="status" id="status"></div>
+
+            <!-- 设置面板 -->
+            <div class="settings-panel" id="settings">
+                <label>字号 <input type="number" id="set-fontsize" min="10" max="300" /></label>
+                <label>行距 <input type="range" id="set-lineheight" min="0.8" max="2.0" step="0.05" value="1.15" /></label>
+                <label>未读色 <input type="color" id="set-textcolor" /></label>
+                <label>已读色 <input type="color" id="set-readcolor" /></label>
+                <label>置顶 <input type="checkbox" id="set-top" /></label>
+                <label>端口 <input type="number" id="set-port" min="1" max="65535" /></label>
+                <label>控制端IP <input type="text" id="set-ip" /></label>
+                <label>控制端端口 <input type="number" id="set-cpip" min="1" max="65535" /></label>
+                <div style="display:flex; gap:6px;">
+                    <button id="apply-settings">应用</button>
+                    <button id="close-settings">关闭</button>
+                </div>
+            </div>
+
+            <!-- 启动角色选择 -->
+            <div class="role-overlay hidden" id="role-overlay">
+                <h2>TipReader</h2>
+                <p id="role-hint">请选择本机角色</p>
+                <div class="roles">
+                    <button data-role="01" id="role-01">01 控制端</button>
+                    <button data-role="02" id="role-02">02 被控端</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# 构建产物（exe 通过 GitHub Release 发布，不入库）
+TipReader.exe
+release/
+
+# 个人稿件（部署时把 read.sample.md 复制一份命名为 read.md）
+read.md
+
+# 系统 / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
