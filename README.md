@@ -79,13 +79,13 @@ go mod vendor
 go build -mod=vendor -trimpath -ldflags "-s -w -H windowsgui" -o TipReader.exe .
 ```
 
-更换应用图标：替换根目录 `TB.png` 后重新生成图标资源：
+更换应用图标：替换根目录 `TB.png` 后，在本地 `build/` 目录维护 `resource.rc`（引用 `appicon.ico`，含 VERSIONINFO 与图标资源 ID 1）并重新生成：
 
 ```cmd
 windres -O coff -c 65001 build\resource.rc -o rsrc_windows_amd64.syso
 ```
 
-再执行 `go build` 即可（`-c 65001` 必须带上，否则中文资源会乱码）。
+再执行 `go build` 即可（`-c 65001` 必须带上，否则中文资源会乱码）。`build/` 不入库，但编译好的 `rsrc_windows_amd64.syso` 已入库，克隆后可直接 `go build`。
 
 ## 常见问题
 

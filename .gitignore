@@ -2,6 +2,9 @@
 TipReader.exe
 release/
 
+# 图标资源中间产物（build/resource.rc 本地维护；.syso 已入库可直接构建）
+build/
+
 # 个人稿件（部署时把 read.sample.md 复制一份命名为 read.md）
 read.md
 

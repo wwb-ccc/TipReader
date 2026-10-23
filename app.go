@@ -4,8 +4,11 @@ import (
 	"context"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+
+	"tipreader/internal/windows"
 )
 
 // Settings is the frontend-facing display configuration.
@@ -358,7 +361,26 @@ func (a *App) lastLineIDLocked() int {
 // the configured role when the application starts.
 func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
 	a.StartNetworking(ctx)
+	go a.applyAppIcon()
 	return nil
+}
+
+// applyAppIcon waits for the native window to exist and applies the exe's
+// embedded icon to the taskbar / title bar (Wails v3 uses the Windows default
+// class icon, so WM_SETICON is required).
+func (a *App) applyAppIcon() {
+	for i := 0; i < 50; i++ {
+		a.mu.RLock()
+		win := a.win
+		a.mu.RUnlock()
+		if win != nil {
+			if h := win.NativeWindow(); h != nil && uintptr(h) != 0 {
+				windows.SetAppIcon(uintptr(h))
+				return
+			}
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
 }
 
 // StartNetworking begins the correct network role (controller hub or viewer
