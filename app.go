@@ -354,6 +354,13 @@ func (a *App) lastLineIDLocked() int {
 	return max
 }
 
+// ServiceStartup is the Wails v3 lifecycle hook: boot the network layer with
+// the configured role when the application starts.
+func (a *App) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
+	a.StartNetworking(ctx)
+	return nil
+}
+
 // StartNetworking begins the correct network role (controller hub or viewer
 // client) based on the current config role. It is idempotent.
 func (a *App) StartNetworking(parent context.Context) {

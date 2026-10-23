@@ -48,6 +48,9 @@ func main() {
 
 	appSvc := NewApp(dir, cfg)
 
+	// First launch: auto-create read.md with a starter guide (never overwrites).
+	ensureReadMD(filepath.Join(dir, "read.md"))
+
 	// For the controller, a missing read.md must fail clearly, not silently.
 	if parseErr := appSvc.Load(); parseErr != nil {
 		if cfg.Get().Role == "01" {

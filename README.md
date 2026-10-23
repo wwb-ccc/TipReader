@@ -1,60 +1,98 @@
+<div align="center">
+
+<img src="TB.png" width="160" alt="TipReader" />
+
 # TipReader
 
-Windows 透明悬浮提词器（类音乐悬浮歌词）。完全透明、无边框、可移动、可缩放、可点击阅读、支持 OBS 捕获排除、支持 01/02 局域网同步。
+**Windows 透明悬浮提词器**
 
-## 技术栈（规格要求）
+完全透明 · 无边框 · 可拖动缩放 · 点击阅读 · OBS 捕获排除 · 局域网多端同步
 
-- 语言：Go `go1.26.4`（实际使用版本）
-- GUI 框架：Wails v3（`v3.0.0-beta.22`）
-- 前端：原生 HTML + CSS + JavaScript（无 React/Vue/npm）
-- Windows 原生能力：`golang.org/x/sys/windows`
-- 网络：原生 WebSocket（`github.com/gorilla/websocket`）
-- 依赖：`go mod vendor` 已全部下载到本项目 `vendor/`，前端资源用 `go:embed` 打入 exe，最终为单文件便携程序，**不依赖 Node.js / Python / Go 运行库**。
+[![Release](https://img.shields.io/badge/release-v1.1.0-blue)](../../releases)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey)]()
+[![Built with](https://img.shields.io/badge/built%20with-Go%20%2B%20Wails%20v3-00ADD8)]()
 
-## 目录结构
+[下载最新版](../../releases) · [快速上手](#快速上手) · [从源码构建](#从源码构建)
+
+</div>
+
+---
+
+## 功能特性
+
+- **透明悬浮**：窗口背景 100% 透明，文字完全不透明并带深色描边，任何背景下都清晰可读
+- **点击阅读**：点击任意一行设置阅读位置，该行及之前的行自动标红
+- **键盘控制**：`↑` `↓` `空格` 切换行，`Ctrl+R` 重读稿件，`Esc` 关闭
+- **无边框窗口**：顶部透明条拖动，四边/四角缩放，可置顶
+- **OBS 捕获排除**：通过 `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` 让 OBS 窗口/显示器捕获录不到本窗口，本机用户正常观看
+- **局域网同步**：`01 控制端` + `02 被控端`（或手机浏览器）实时同步行位置，基于原生 WebSocket
+- **便携单文件**：资源全部内嵌 exe，无需安装、无需运行库，首次启动自动生成 `read.md` 引导稿件与 `conf/config.json` 默认配置
+- **Markdown 稿件**：自动清理 `#` 标题、`**粗体**`、`*斜体*`、`` `代码` ``、`[链接]()`、列表符号，标题统一字号，连续空行折叠
+
+## 下载安装
+
+1. 到 [Releases](../../releases) 下载 `TipReader.exe`（v1.1.0）
+2. 放到任意文件夹，双击运行
+3. 首次启动会自动生成 `read.md`（引导示例）和 `conf/config.json`（默认配置）
+4. 用记事本把 `read.md` 内容换成你的台词，按 `Ctrl+R` 重读即可
+
+> 需要 WebView2 Runtime（Windows 10/11 一般已内置）。
+
+## 快速上手
 
 ```text
-TipReader.exe     可执行文件（全部资源已内嵌）
-read.md           提词稿件（放在 exe 同目录）
-conf/config.json  配置（便携，不含绝对路径）
+TipReader.exe     主程序（图标/资源已内嵌）
+read.md           提词稿件（每行一句；缺失时自动生成引导示例）
+conf/config.json  配置（字号/颜色/端口/窗口尺寸等，自动生成）
 ```
-
-## 角色
-
-启动时选择本机角色（配置 `conf/config.json` 的 `role` 也会预选中）：
-
-- `01 控制端`：本窗口即控制界面，可点击整行、上一行/下一行、重读、设置；同时在本机端口提供 WebSocket 服务，手机/浏览器访问 `http://电脑IP:端口/` 即成为被控端。
-- `02 被控端`：只显示提词器，自动同步控制端行位置，**禁止用户手动滚动/改行**。
-
-配置 `controllerIP` / `controllerPort` 指向控制端。
 
 ## 操作
 
-- 点击任意行：设置当前阅读位置，该行及其前所有行变红
-- `↑` / `↓` / 空格：上一行 / 下一行
-- `Ctrl+R`：重新读取 read.md
-- `Esc`：关闭窗口
-- 顶部透明条：拖动窗口（四边 / 四角可缩放）
+| 操作 | 效果 |
+| --- | --- |
+| 点击任意一行 | 从该行开始阅读，该行及之前标红 |
+| `↑` / `↓` / `空格` | 上一行 / 下一行 |
+| `Ctrl+R` | 重新读取 read.md（改完稿件无需重启） |
+| `Esc` | 关闭窗口 |
+| 拖动顶部透明条 | 移动窗口（四边/四角可缩放） |
 
-## 构建（开发机）
+## 角色（局域网同步）
 
-```cmd
-go mod vendor          # 依赖全部落到本目录（离线可编译）
-go build -mod=vendor -trimpath -ldflags "-s -w -H windowsgui" -o release\TipReader\TipReader.exe .
-```
+- **01 控制端**：本窗口即控制界面；同时在本机端口提供 WebSocket 服务
+- **02 被控端**：只显示提词器，自动跟随控制端行位置（禁止手动滚动）
 
-最终便携目录只需：`TipReader.exe`、`read.md`、`conf/config.json`，整文件夹复制到任意 Windows（10/11，amd64）即可运行。
+手机或同一局域网电脑浏览器访问 `http://控制端IP:端口/` 即成为网页被控端。
 
-Windows 防火墙放行（如需被局域网访问）：
+Windows 防火墙放行（控制端如需被局域网访问）：
 
 ```cmd
 netsh advfirewall firewall add rule name="TipReader" dir=in action=allow protocol=TCP localport=7777
 ```
 
-## OBS 捕获排除
+## 从源码构建
 
-启用 `conf/config.json` 的 `contentProtection: true`。程序通过 Windows 原生 `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` 使 OBS 的窗口捕获 / 显示器捕获无法录到本窗口，但本机用户仍可正常看到。该 API 主要对窗口与显示器捕获有效，第三方截图可能仍能看到。
+环境要求：Go 1.26+、MinGW windres（仅重新生成图标资源时需要）
 
-## Markdown 说明
+```cmd
+go mod vendor
+go build -mod=vendor -trimpath -ldflags "-s -w -H windowsgui" -o TipReader.exe .
+```
 
-`read.md` 中的 Markdown 标记（`#` 标题、`**粗体**`、`*斜体*`、`` `代码` ``、`[链接](url)`、列表符号）都会被清理，标题统一字号，连续空行折叠为单个空行间距。程序只读不改写 `read.md`。
+更换应用图标：替换根目录 `TB.png` 后重新生成图标资源：
+
+```cmd
+windres -O coff -c 65001 build\resource.rc -o rsrc_windows_amd64.syso
+```
+
+再执行 `go build` 即可（`-c 65001` 必须带上，否则中文资源会乱码）。
+
+## 常见问题
+
+- **本机浏览器访问 `127.0.0.1:7777` 失败**：可能被本机其他软件占用（如华硕 Armoury Crate），改用局域网 IP 访问，或在设置中更换端口
+- **exe 图标显示旧的**：Windows 图标缓存残留，重启资源管理器或注销重登即可
+- **修改稿件后不生效**：按 `Ctrl+R` 重读，无需重启软件
+
+## 许可证
+
+[Apache License 2.0](LICENSE)

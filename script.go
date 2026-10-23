@@ -13,6 +13,42 @@ type ScriptLine struct {
 	Read bool   `json:"read"`
 }
 
+// defaultReadMD is written to read.md on first launch, guiding new users to
+// replace it with their own script.
+const defaultReadMD = `# 欢迎使用 TipReader 提词器
+
+这是软件第一次启动时自动生成的 read.md 示例稿件。
+
+请用记事本或任意文本编辑器打开 exe 所在目录下的 read.md，把这里的内容全部替换成你自己的台词。
+
+每一行文字就是提词器上的一行。
+
+空一行可以分段，产生适当间距。
+
+# 快捷操作
+
+点击任意一行：从该行开始阅读，该行及之前的行会标红。
+
+方向键上下或空格键：切换上一行、下一行。
+
+Ctrl + R：修改并保存 read.md 后重新读取，无需重启软件。
+
+Esc：关闭窗口。
+
+顶部透明条可拖动窗口，设置面板可调整字号、颜色、行距等。
+
+现在就动手，把这份示例换成你的第一份提词稿件吧！
+`
+
+// ensureReadMD creates read.md with the starter guide when it does not exist.
+// An existing read.md is never overwritten.
+func ensureReadMD(path string) {
+	if _, err := os.Stat(path); err == nil {
+		return
+	}
+	_ = os.WriteFile(path, []byte(defaultReadMD), 0644)
+}
+
 var (
 	reHeading = regexp.MustCompile(`^#{1,6}\s*`)
 	reBold    = regexp.MustCompile(`\*\*(.+?)\*\*`)

@@ -29,7 +29,7 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		FontFamily:         "Microsoft YaHei",
-		FontSize:           16,
+		FontSize:           18,
 		TextColor:          "#FFFFFF",
 		ReadColor:          "#FF0000",
 		AlwaysOnTop:        true,
@@ -77,7 +77,7 @@ func newConfigStore(appDir string) (*configStore, error) {
 // normalize clamps values into sensible ranges.
 func (s *configStore) normalize() {
 	if s.config.FontSize < 10 {
-		s.config.FontSize = 32
+		s.config.FontSize = 18
 	}
 	if s.config.TextColor == "" {
 		s.config.TextColor = "#FFFFFF"

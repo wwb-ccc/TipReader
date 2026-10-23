@@ -5,6 +5,9 @@ release/
 # 个人稿件（部署时把 read.sample.md 复制一份命名为 read.md）
 read.md
 
+# 运行时自动生成的本地配置
+conf/
+
 # 系统 / IDE
 .DS_Store
 Thumbs.db

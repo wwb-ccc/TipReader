@@ -88,7 +88,11 @@ func (h *Hub) startController(a *App, cfg Config, ctx context.Context) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		serveEmbedded(w, r, "viewer.html")
+		serveEmbedded(w, r, "webextra/viewer.html")
+	})
+	mux.HandleFunc("/tb.png", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/png")
+		serveEmbedded(w, r, "frontend/tb.png")
 	})
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := wsUpgrader.Upgrade(w, r, nil)
